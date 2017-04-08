@@ -1,0 +1,32 @@
+<h2> Welcome To Blog </h2>
+
+<% if @published_articles.empty? && @unpublished_articles.empty? %>
+	<p> No Articles Found <p>
+<% else %> 
+	<p> Listing Published Articles </p>
+	<ol>
+	<% @published_articles.each do |article| %>
+	<li> <%= article.title %> - <%= image_tag(article.cover.url) if article.cover %>-<%= link_to "Show", article_path(article) %></li>
+	<% end %>
+	</ol>
+
+	<p> Listing Unpublished Articles </p>
+	<ol>
+	<% @unpublished_articles.each do |article| %>
+	<li> <%= article.title %> - <%= link_to "Show", article_path(article) %></li>
+	<% end %>
+	</ol>
+<% end %>
+
+<p> Listing Artiles Sorted </p>
+<% @hash.keys.sort.each do |key| %>
+<ul> Articles in <%= key.strftime('%B %Y') %> 
+		 <% @hash[key].each do|v| %>
+		 <ol> <%= v.title %> <% if v.published? %> (published) <% else %> (unpublished) <% end %> -<%= link_to "show" , article_path(v) %></ol>
+		 <% end %>
+		 </ul>
+	<% end %>
+
+<% if can? :create , Article %>
+<%= link_to "Create Article", new_article_path %>
+<% end %>

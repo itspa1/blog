@@ -1,0 +1,9 @@
+<h2> Listing Your Comments </h2>
+
+<ul>
+<% @comments.each do |comment| %>
+<li>(article)-><%= link_to comment.article.title , article_path(comment.article)%>
+	<p>(comment)-><%= comment.title %>(<%= comment.body %>) - <%= link_to "delete comment", comment_path(comment), method: :delete , data: {confirm: "Are You Sure?"} %> </p>
+</li>
+<% end %>
+</ul>

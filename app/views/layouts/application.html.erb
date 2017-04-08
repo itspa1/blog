@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Blog</title>
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <%= csrf_meta_tags %>
+</head>
+<body>
+<% if user_signed_in? %>
+  Welcome <%= current_user.username %>|
+  <%= link_to "Account Settings", edit_user_registration_path %> | 
+  <%= link_to "Sign Out", destroy_user_session_path , method: :delete, data: {confirm: "Are You Sure?"} %>|
+  <%= link_to "Home" , root_path %>
+ <% else %>
+ 	<%= link_to "Sign Up", new_user_registration_path %> |
+ 	<%= link_to "Login", new_user_session_path %> |
+ 	<%= link_to "Home" , root_path %>
+ <% end %>
+
+	<p class="notice"><%= notice %></p>
+    <p class="alert"><%= alert %></p>
+
+<%#= notice %>
+<%= yield %>
+
+</body>
+</html>

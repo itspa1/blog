@@ -1,0 +1,34 @@
+<h2> Edit < <%= @article.title %> > </h2>
+
+<%= form_for @article do |f| %>
+
+	<% if @article.errors.any? %>
+	<h3> these errors prohibited the form from being saved: </h3>
+	<ul>
+	<% @article.errors.full_messages.each do |msg| %>
+	<li> <%= msg %> </li>
+	<% end %>
+	</ul>
+	<% end %>
+
+	<%= f.label :title , for: "title"%>	<br/>
+	<%= f.text_field :title , id: "title", autofocus: true %>	<br/>
+
+	<%= f.label :body ,for: "body"%> 	<br/>
+	<%= f.text_area :body, cols: 25, rows: 5, id: "body"%>	<br/>
+
+	<%= f.label :published %>
+	<%= f.check_box :published %>	<br/>
+
+	<br/>
+	<%= f.label :published_date %>	<br/>
+	<%= f.date_select :published_date, order: [:day,:month,:year] %> <br/>
+
+	<%= f.label :cover %> <br/>
+	<%= f.file_field :cover %> <br/>
+	
+	<%= f.label :Categories %> <br/>
+	<%= f.collection_check_boxes :category_ids, Category.all, :id, :name  %> <br/>
+
+	<%= f.submit "Apply Changes" %> <%= link_to "back" , :back %>
+	<% end %> 

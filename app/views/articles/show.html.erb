@@ -1,0 +1,54 @@
+<h2> <%= @article.title %> </h2>
+
+<p> Body - <%= @article.body %> </p>
+
+<p> Published - <% if @article.published %>
+					<%= true %>
+				<% else %> 
+					<%= false %>
+				<% end %> 		</p>
+
+<p> Published date - <%= @article.published_date.strftime(" %A , %d %B %Y") %> </p>
+
+<p><%= image_tag(@article.cover.url) if @article.cover %> </p>
+
+<ul> <% @article.categories.each do |category| %>
+		<li><%= link_to category.name, category %> </li>
+			<% end %>
+</ul>
+
+<% if can? :update, @article%>
+<%= link_to "Edit", edit_article_path(@article) %> |
+<% end %>
+<% if can? :destroy, @article %> 
+	<%= link_to "Destroy", article_path(@article), method: :delete, data: {confirm: "Are You Sure?"} %>|
+	<% end %>
+
+<% if @article.comments.empty? %> 
+	<p> No Comments Found </p>
+<% else %>
+ 	<% comments = @article.comments.all %>
+ 	<h4> Listing Comments </h4>
+ 	<ul>
+ 		<% comments.each do |comment| %>
+ 		 <li><%= comment.user.username %> </li><p><%= comment.title %> (<%= comment.body %>)
+ 				<% if can? :destroy , comment %>
+ 				<%= link_to "Delete Comment" , comment_path(comment) ,method: :delete , data: {confirm: "Are You Sure?"} %> - <%= link_to "My comments" , comment_path(current_user) %></p>
+ 				<% end %></li>
+ 		<% end %>
+ 		</ul>
+<% end %> 
+
+<% if can? :create , Comment %>
+	<%= form_for Comment.new do |f| %>
+		<%= f.label :Leave_a_comment %> <br/>
+		<%= f.text_field :title %> <br/>
+
+		<%= f.label :Description %> <br/>
+		<%= f.text_area :body %> <br/>
+		
+		<%= f.hidden_field :article_id , value: @article.id %> <br/>
+
+		<%= f.submit "Add Comment" %>
+	<% end %>
+<% end %>
