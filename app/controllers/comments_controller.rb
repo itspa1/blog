@@ -4,16 +4,8 @@ before_action :authenticate_user! , only: [:create, :destroy]
 load_and_authorize_resource
 	def create
 			@comment = Comment.new(comment_params)
-			@comment.user_id = current_user.id
-		if user_signed_in? 
-			if @comment.save
-				redirect_to article_path(@comment.article_id)
-			else
-				render action: :back
-			end
-		else
-			redirect_to new_user_sign_up, notice: "You Need To Log In Or Sign Up Before Adding Comment"
-		end
+			@comment.user_id = current_user.id 
+			@comment.save
 	end
 
 	def show
@@ -22,9 +14,7 @@ load_and_authorize_resource
 
 	def destroy
 		@comment = Comment.find(params[:id])
-		if @comment.destroy 
-			redirect_to :back
-		end
+		@comment.destroy
 	end
 
 

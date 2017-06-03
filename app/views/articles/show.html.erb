@@ -1,54 +1,111 @@
-<h2> <%= @article.title %> </h2>
 
-<p> Body - <%= @article.body %> </p>
+<div class="col-md-8">
+	<div class="page-header">
+	<h2> <b><%= @article.title %> </b></h2>
+	</div>
+	<img src="http://lorempixel.com/600/400" alt="Dummy image" class="img-rounded"></br>
+	</br>
+<p> <%= @article.body %> </p>
 
-<p> Published - <% if @article.published %>
-					<%= true %>
-				<% else %> 
-					<%= false %>
-				<% end %> 		</p>
+</hr>
+<div class="pull-left">
+		<b>Categories: </b>
+		<% @article.categories.each do |category| %>
+		<%= link_to category.name, category %>
+		<% end %>
+	</div>
 
-<p> Published date - <%= @article.published_date.strftime(" %A , %d %B %Y") %> </p>
+	<div class="pull-right">
+		<i class="glyphicon glyphicon-user"></i><%= @article.user.try(:username) %>
+		<i class="glyphicon glyphicon-time"></i><%= @article.published_date %>
+	</div>
+<br/>
+<%#= image_tag(@article.cover.url) if @article.cover %> 
+<hr>
+<div class="well col-md-8">
+<% if can? :create , Comment %>
+		<%= form_for Comment.new ,remote: true do |f| %>
+			<div class="form-group">
+			<%= f.label :Leave_a_comment %>
+			<%= f.text_field :title ,class: "form-control"%> <br/>
+			</div>
 
-<p><%= image_tag(@article.cover.url) if @article.cover %> </p>
+			<div class="form-group">
+			<%= f.label :Description %> <br/>
+			<%= f.text_area :body ,class: "form-control"%> <br/>
+			</div>
+			
+			<%= f.hidden_field :article_id , value: @article.id %> <br/>
 
-<ul> <% @article.categories.each do |category| %>
-		<li><%= link_to category.name, category %> </li>
-			<% end %>
-</ul>
+
+			<%= f.submit "Add Comment",class: "btn btn-sm btn-primary" %>
+		<% end %>
+	<% end %>
+
+	</br>
+
 
 <% if can? :update, @article%>
-<%= link_to "Edit", edit_article_path(@article) %> |
+<%= link_to "Edit", edit_article_path(@article),class: "btn btn-sm btn-warning" %>
 <% end %>
 <% if can? :destroy, @article %> 
-	<%= link_to "Destroy", article_path(@article), method: :delete, data: {confirm: "Are You Sure?"} %>|
+	<%= link_to "Destroy", article_path(@article), method: :delete, data: {confirm: "Are You Sure?"},class: "btn btn-sm btn-danger" %>
 	<% end %>
 
-<% if @article.comments.empty? %> 
-	<p> No Comments Found </p>
-<% else %>
- 	<% comments = @article.comments.all %>
- 	<h4> Listing Comments </h4>
- 	<ul>
- 		<% comments.each do |comment| %>
- 		 <li><%= comment.user.username %> </li><p><%= comment.title %> (<%= comment.body %>)
- 				<% if can? :destroy , comment %>
- 				<%= link_to "Delete Comment" , comment_path(comment) ,method: :delete , data: {confirm: "Are You Sure?"} %> - <%= link_to "My comments" , comment_path(current_user) %></p>
- 				<% end %></li>
- 		<% end %>
- 		</ul>
-<% end %> 
+</div>
 
-<% if can? :create , Comment %>
-	<%= form_for Comment.new do |f| %>
-		<%= f.label :Leave_a_comment %> <br/>
-		<%= f.text_field :title %> <br/>
+</div>
 
-		<%= f.label :Description %> <br/>
-		<%= f.text_area :body %> <br/>
-		
-		<%= f.hidden_field :article_id , value: @article.id %> <br/>
+<div class="col-md-4">
+	<div class="page-header">
+	<h2>Related articles</h2 >
+	</div>
+	<% @related_articles.each do |article| %>
+		<img src="http://lorempixel.com/250/100" alt="Dummy image" class="img-rounded"> </br>
+		<%= link_to article.title.truncate(50),article %>
+		<% end %>	
 
-		<%= f.submit "Add Comment" %>
-	<% end %>
-<% end %>
+		<div class="page-header">
+	<h3>Categories</h3>
+	</div> 
+		<ul class="list-group">
+		<% Category.all.each do |category| %>
+		  <li class="list-group-item">
+		    <span class="badge"><%= category.articles.size %></span>
+		    <%= link_to category.name,category %>
+		  </li>
+		  <% end %>
+		</ul>
+
+
+	<div class="page-header">
+	 <h3>Recent Comments</h3>
+	</div>
+	<% if @article.comments.empty? %> 
+		<p> No Comments Found </p>
+	<% else %>
+	<div id="comments_section">
+	 	<% comments = @article.comments.all %>
+	 	<h4> Listing Comments </h4>
+	 	<% comments.each do |comment| %>
+		 	<div class="media" id="comment_<%=comment.id%>">
+				<div class="media-left">			
+				   <img class="media-object" src="http://lorempixel.com/64/64/people/">
+				</div>
+				<div class="media-body">
+					    <h4 class="media-heading"><%= comment.title %></h4>
+					    	<%= comment.body %> 
+					    <% if user_signed_in? && ((comment.user_id == current_user.id)||(can? :destroy,comment))%>
+			 				<%= link_to comment ,method: :delete , data: {confirm: "Are You Sure?"} ,remote: true ,class: "btn btn-sm" do%>
+			 				<i class="glyphicon glyphicon-trash"></i>
+			 				<% end %>
+	 					<% end  %>
+				</div>
+			</div>
+	 	<% end %>
+	<% end %> 
+	</div>
+
+	
+</div>
+

@@ -1,35 +1,65 @@
 <h2> Create New article </h2>
 
+<div class="col-md-8">
 <%= form_for @article do |f| %>
 
 	<% if @article.errors.any? %>
-	<h3> these errors prohibited the form from being saved: </h3>
-	<ul>
-	<% @article.errors.full_messages.each do |msg| %>
-	<li> <%= msg %> </li>
-	<% end %>
-	</ul>
+	<div class="alert alert-danger">
+		<h3> These errors prohibited the form from being saved: </h3>
+		<ul>
+		<% @article.errors.full_messages.each do |msg| %>
+		<li><b><%= msg %></b></li>
+		<% end %>
+		</ul>
+	</div>
 	<% end %>
 
+	<div class="form-group">
 	<%= f.label :title , for: "title"%>	<br/>
-	<%= f.text_field :title , id: "title", autofocus: true %>	<br/>
+	<%= f.text_field :title , id: "title", autofocus: true,class: "form-control"  %>	<br/>
+	</div>
 
+	<div class="form-group">
 	<%= f.label :body ,for: "body"%> 	<br/>
-	<%= f.text_area :body, cols: 25, rows: 5, id: "body"%>	<br/>
+	<%= f.text_area :body, cols: 25, rows: 5, id: "body",class: "form-control" %>	<br/>
+	</div>
 
-	<%= f.label :published %>
-	<%= f.check_box :published %>	<br/>
+	<div class="checkbox">
+    	<label>
+      		<%= f.check_box :published %>Published
+    	</label>
+  	</div>
 
 	<br/>
-	<%= f.label :published_date %>	<br/>
-	<%= f.date_select :published_date, order: [:day,:month,:year] %> <br/>
+	<div class="form-group">
+	<%= f.label :published_date %>	
+	<%= f.text_field :published_date ,class: "form-control" %> <br/>
+	</div>
 
-	<%= f.label :cover %> <br/>
-	<%= f.file_field :cover %> <br/>
-
-	<%= f.label :Categories %> <br/>
-	<%= f.collection_check_boxes :category_ids, Category.all, :id, :name  %> <br/>
-
-	<%= f.submit "Add Article" %> <%= link_to "Cancel" , :back %>
- 	
+	<div class="field">
+	<%= f.label :cover %> 
+	<%= f.file_field :cover  %> <br/>
+	</div>
+  
+	<%= f.collection_check_boxes :category_ids, Category.all, :id, :name do |category|  %>
+	<label class="checkbox-inline">
+		 <%= category.check_box %><%= category.object.name %>
+	</label>
+	<% end %> <br/>
+	
+	<br/>
+	<div class="actions">
+	<%= f.submit "Add Article" ,class: "btn btn-info"%> <%= link_to "Cancel" , :back ,class: "btn btn-danger"%>
+ 	</div>
 	<% end %>
+</div>
+
+	<script>
+		 $(function(){
+	    $("#article_published_date").datepicker({
+	    	dateFormat: 'yy-mm-dd',
+	    	changeMonth: true,
+	    	changeYear: true
+	    });
+		  });
+	</script>

@@ -1,0 +1,46 @@
+var outerDiv = document.createElement('div');
+var innerDiv = document.createElement('div');
+outerDiv.setAttribute("class","media");
+outerDiv.setAttribute("id","comment_<%=@comment.id %>");
+
+innerDiv.setAttribute("class","media-left"); 
+
+var img = document.createElement('img');
+img.setAttribute("src","http://lorempixel.com/64/64/people/");
+img.setAttribute("alt","Dummy image");
+img.setAttribute("class","img-rounded");
+innerDiv.appendChild(img);
+
+var divMedia = document.createElement('div');
+divMedia.setAttribute("class","media-body");
+
+var header = document.createElement('h4');
+header.setAttribute("class","media-heading");
+
+var text = document.createTextNode("<%=@comment.title%>");
+header.appendChild(text);
+
+var body = document.createTextNode("<%=@comment.body%>");
+divMedia.appendChild(header);
+divMedia.appendChild(body);
+
+var anchor = document.createElement('a');
+anchor.setAttribute("data-confirm","Are you sure?");
+anchor.setAttribute("class","btn btn-sm");
+anchor.setAttribute("data-remote","true");
+anchor.setAttribute("rel","nofollow");
+anchor.setAttribute("data-method","delete");
+anchor.setAttribute("href","/comments/<%=@comment.id%>");
+
+var icon = document.createElement('i');
+icon.setAttribute("class","glyphicon glyphicon-trash");
+
+anchor.appendChild(icon);
+divMedia.appendChild(anchor);
+
+outerDiv.appendChild(innerDiv);
+outerDiv.appendChild(divMedia);
+
+$('#comments_section').append(outerDiv);
+$('#comment_title').val("");
+$('#comment_body').val("");

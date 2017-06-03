@@ -1,32 +1,62 @@
-<h2> Welcome To Blog </h2>
+<div class="page-header">
+	<h2> Welcome To Blog </h2>
+</div>
 
-<% if @published_articles.empty? && @unpublished_articles.empty? %>
-	<p> No Articles Found <p>
-<% else %> 
-	<p> Listing Published Articles </p>
-	<ol>
-	<% @published_articles.each do |article| %>
-	<li> <%= article.title %> - <%= image_tag(article.cover.url) if article.cover %>-<%= link_to "Show", article_path(article) %></li>
+<div class="col-md-8">
+	<% @articles.each do |article| %>
+	<div class="article_listing">
+		<div class="page-header">
+		<h4><%=link_to article.title ,article_path(article)%></h4>
+		</div>
+		<img src="http://lorempixel.com/600/250" alt="Dummy image" class="img-rounded"></br>
+		<%#= image_tag(article.cover) %>
+		<%= article.body.truncate(300) %>
+		<%= link_to "read more" , article_path(article),class: "btn btn-default btn-sm" %>
+	</div> 
+
+	<hr/>
+	<div class="pull-left">
+		<b>Categories: </b>
+		<% article.categories.each do |category| %>
+		<%= link_to category.name, category %>
+		<% end %>
+	</div>
+
+	<div class="pull-right">
+		<i class="glyphicon glyphicon-user"></i><%= article.user.try(:username) %>
+		<i class="glyphicon glyphicon-time"></i><%= article.published_date %>
+	</div>
+	<br/>
 	<% end %>
-	</ol>
 
-	<p> Listing Unpublished Articles </p>
-	<ol>
-	<% @unpublished_articles.each do |article| %>
-	<li> <%= article.title %> - <%= link_to "Show", article_path(article) %></li>
-	<% end %>
-	</ol>
-<% end %>
-
-<p> Listing Artiles Sorted </p>
-<% @hash.keys.sort.each do |key| %>
-<ul> Articles in <%= key.strftime('%B %Y') %> 
-		 <% @hash[key].each do|v| %>
-		 <ol> <%= v.title %> <% if v.published? %> (published) <% else %> (unpublished) <% end %> -<%= link_to "show" , article_path(v) %></ol>
-		 <% end %>
-		 </ul>
-	<% end %>
-
+	</br>
 <% if can? :create , Article %>
 <%= link_to "Create Article", new_article_path %>
 <% end %>
+
+<%=  will_paginate @articles %>
+</div>
+
+<div class="col-md-4">	
+	<div class="page-header">
+	<h3>Categories</h3>
+	</div> 
+		<ul class="list-group">
+		<% Category.all.each do |category| %>
+		  <li class="list-group-item">
+		    <span class="badge"><%= category.articles.size %></span>
+		    <%= link_to category.name,category %>
+		  </li>
+		  <% end %>
+		</ul>
+</div>
+
+<!--<p> Listing Artiles Sorted </p>
+<#% @hash.keys.sort.each do |key| %>
+<ul> Articles in <#%= key.strftime('%B %Y') %> 
+		 <#% @hash[key].each do|v| %>
+		 <ol> <#%= v.title %> <#% if v.published? %> (published) <#% else %> (unpublished) <#% end %> -<%#= link_to "show" , article_path(v) %></ol>
+		 <#% end %>
+		 </ul>
+	<#% end %>
+-->

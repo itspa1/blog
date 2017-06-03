@@ -3,7 +3,8 @@ class ArticlesController < ApplicationController
 before_action :authenticate_user! ,except: [:index, :show]
 load_and_authorize_resource
 def index	
-	@articles = Article.all
+	@articles = Article.paginate(:page => params[:page], :per_page => 5)
+	
 	@hash = {}
 	@published_articles = Article.where('published = ?',true)
 	@unpublished_articles = Article.where('published = ?',false)
@@ -28,6 +29,9 @@ end
 
 def show 
 	@article = Article.find(params[:id])
+	category_ids = @article.categories.pluck(:id)
+	selected_category_ids = ArticleCategory.where(category_id: category_ids).shuffle.first(3).map(&:article_id)
+	@related_articles = Article.where(id: selected_category_ids)
 end
 
 def edit
