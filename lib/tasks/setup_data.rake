@@ -1,4 +1,5 @@
-task :setup_rake => :environment do 
+namespace :setup_data do
+	task :setup_rake => :environment do 
 
 	25.times do
 	article = Article.new
@@ -24,4 +25,5 @@ task :setup_rake => :environment do
 	Permission.create(user_id: user.id , role_id: Role.first.id)
 
 
+	end
 end
